@@ -7,7 +7,20 @@ server.use(express.json());
 
 const Bancocurso = ["Node.js", "TypeScript", "SqlServer", "SpringBoot", "JavaScript avançado"]
 
-//c
+//Criado middlewares
+server.use((req, res, next) => {
+    console.log('REQUISIÇÃO CHAMADA')
+
+    return next();
+})
+
+function chackandoDados(req, res, next) {
+    if (!req.body.name) {
+        return res.status(400).json({ Error: "Verifique se o que voce esta mandando esta correto" });
+    }
+
+    return next();
+}
 
 
 //Lista todos os cursos
@@ -21,8 +34,8 @@ server.get('/cursos/:index', (req, res) => {
     return res.json(Bancocurso[index]);
 })
 
-//criando
-server.post('/curso', (req, res) => {
+//criando || Ultilizando Middlwares
+server.post('/curso', chackandoDados , (req, res) => {
     const { name } = req.body
     Bancocurso.push(name)
 
@@ -30,7 +43,7 @@ server.post('/curso', (req, res) => {
 })
 
 //Atualizando curso 
-server.put('/cursos/:index', (req, res) => {
+server.put('/cursos/:index', chackandoDados,  (req, res) => {
     const { index } = req.params
     const { name } = req.body
 
@@ -45,7 +58,7 @@ server.delete('/cursos/:index', (req, res) => {
 
     Bancocurso.splice(index, 1)
 
-    return res.json({ message: "curso deletado com sucesso"})
+    return res.json({ message: "curso deletado com sucesso" })
 })
 
 console.log(Bancocurso)
